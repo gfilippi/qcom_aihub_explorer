@@ -80,6 +80,11 @@ results/index.html    landing page listing every snapshot (the same table is wri
                       the top-level README.md, between the snapshots:start/end markers)
 ```
 
+When `origin` is a GitHub remote, the README table also gets an "Online" column linking to
+`https://<owner>.github.io/<repo>/results/...`. That requires GitHub Pages enabled on the repo
+(Settings → Pages → deploy from branch `main`, folder `/`). The empty `.nojekyll` file at the
+repo root makes Pages serve the files as they are, without a Jekyll build.
+
 The page needs no network access: open `index.html` directly from disk.
 
 ## The page

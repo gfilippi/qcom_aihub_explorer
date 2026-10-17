@@ -4,6 +4,8 @@ import argparse
 import collections
 import json
 import os
+import re
+import subprocess
 import sys
 
 import fetch
@@ -58,10 +60,21 @@ def cmd_build(args):
     write_landing()
 
 
+def pages_base_url():
+    """GitHub Pages root (https://<owner>.github.io/<repo>) derived from the origin remote, or None."""
+    try:
+        url = subprocess.check_output(["git", "-C", fetch.PROJECT_ROOT, "remote", "get-url", "origin"],
+                                      stderr=subprocess.DEVNULL).decode().strip()
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    m = re.match(r"^(?:git@github\.com:|https://github\.com/)([^/]+)/(.+?)(?:\.git)?/?$", url)
+    return "https://%s.github.io/%s" % (m.group(1).lower(), m.group(2)) if m else None
+
+
 def write_landing():
     snapshots = render.render_landing(RESULTS_DIR)
     print("Wrote        %s (%d snapshots)" % (os.path.join(RESULTS_DIR, "index.html"), len(snapshots)))
-    if render.update_readme_table(README_PATH, RESULTS_DIR, snapshots):
+    if render.update_readme_table(README_PATH, RESULTS_DIR, snapshots, pages_base_url()):
         print("Updated      %s (snapshot table)" % README_PATH)
 
 

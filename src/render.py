@@ -116,10 +116,11 @@ def render_landing(results_dir):
     return snapshots
 
 
-def update_readme_table(readme_path, results_dir, snapshots):
+def update_readme_table(readme_path, results_dir, snapshots, pages_url=None):
     """Rewrite the snapshot table between the snapshots:start/end markers of the README.
 
-    Returns False when the README has no markers (nothing is changed).
+    With pages_url (the GitHub Pages root of the repo) an "Online" column links to the
+    rendered pages. Returns False when the README has no markers (nothing is changed).
     """
     with open(readme_path) as f:
         text = f.read()
@@ -127,11 +128,14 @@ def update_readme_table(readme_path, results_dir, snapshots):
     if not pattern.search(text):
         return False
     rel = os.path.relpath(results_dir, os.path.dirname(os.path.abspath(readme_path))).replace(os.sep, "/")
-    lines = ["| Release | Upstream date | QAIRT | Models | Devices | Results |",
-             "|---|---|---|--:|--:|--:|"]
+    online = "| Online " if pages_url else ""
+    lines = ["| Release %s| Upstream date | QAIRT | Models | Devices | Results |" % online,
+             "|---|%s---|---|--:|--:|--:|" % ("---|" if pages_url else "")]
     for s in snapshots:
-        lines.append("| [%s](%s/%s/index.html) | %s | %s | %d | %d | %s |" % (
-            s["release"]["tag"], rel, s["folder"], s["release"]["commit_date"][:10],
+        page = "%s/%s/index.html" % (rel, s["folder"])
+        cell = "| [view](%s/%s) " % (pages_url.rstrip("/"), page) if pages_url else ""
+        lines.append("| [%s](%s) %s| %s | %s | %d | %d | %s |" % (
+            s["release"]["tag"], page, cell, s["release"]["commit_date"][:10],
             ", ".join(s["qairt"]), s["n_models"], s["n_devices"], "{:,}".format(s["n_perf"])))
     table = "\n".join(lines) + "\n"
     with open(readme_path, "w") as f:
