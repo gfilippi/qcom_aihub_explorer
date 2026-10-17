@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Hub Model Explorer · v0.63.0</title>
+<link rel="stylesheet" href="assets/explorer.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-title">
+    <h1>AI Hub Model Explorer</h1>
+    <span class="badge">v0.63.0</span>
+  </div>
+  <div class="top-meta">
+    235 models · 21 devices · upstream commit 2026-09-23
+    · <a href="../index.html">all snapshots</a>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="panel" id="controls">
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab active" data-view="models" role="tab">Models</button>
+      <button type="button" class="tab" data-view="llm" role="tab">LLMs</button>
+    </div>
+
+    <label class="field">Platform<select id="world"></select></label>
+    <label class="field">Device<select id="device"></select></label>
+    <label class="field" data-only="models">Task<select id="task"></select></label>
+    <label class="field">Metric (Y axis)<select id="metric"></select></label>
+    <label class="field">Runtime<select id="runtime"></select></label>
+    <label class="field" data-only="models">Precision<select id="precision"></select></label>
+    <label class="field" data-only="llm">Context length<select id="context"></select></label>
+    <label class="field" data-only="models">X axis<select id="xaxis">
+      <option value="fps">Throughput (FPS, log)</option>
+      <option value="latency">Latency (ms, log)</option>
+    </select></label>
+    <label class="check"><input type="checkbox" id="labels" checked> Show model names</label>
+
+    <div class="field">
+      <div class="field-head">Models <span id="model-count" class="muted"></span>
+        <span class="links"><a href="#" id="models-all">all</a> · <a href="#" id="models-none">none</a></span>
+      </div>
+      <input type="search" id="model-search" placeholder="Filter models…">
+      <div id="model-list" class="model-list"></div>
+    </div>
+    <button type="button" id="reset" class="button">Reset filters</button>
+  </aside>
+
+  <section class="content">
+    <div class="chart-card">
+      <div class="chart-head">
+        <div>
+          <h2 id="chart-title"></h2>
+          <div id="chart-subtitle" class="muted"></div>
+        </div>
+        <div class="chart-tools">
+          <span class="legend" id="legend"></span>
+          <button type="button" class="icon-button" id="zoom-in" title="Zoom in">+</button>
+          <button type="button" class="icon-button" id="zoom-out" title="Zoom out">−</button>
+          <button type="button" class="icon-button" id="zoom-reset" title="Reset zoom">⟲</button>
+        </div>
+      </div>
+      <div class="chart-wrap" id="chart-wrap">
+        <canvas id="chart"></canvas>
+        <div id="tooltip" class="popup" hidden></div>
+        <div id="empty" class="empty" hidden></div>
+      </div>
+      <div class="hint muted">Hover a bubble for details, click to pin it (links inside). Ctrl + wheel or pinch to zoom, drag to pan. Bubble size: parameter count.</div>
+      <div id="notes-inline" class="notes-inline"></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-head">
+        <h2>Results on <span id="table-device"></span></h2>
+        <span id="table-count" class="muted"></span>
+      </div>
+      <div class="table-wrap"><table id="table"><thead></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="notes">
+      <h2>About this snapshot</h2>
+      <ul>
+        <li>Data: <a href="https://github.com/qualcomm/ai-hub-models/releases/tag/v0.63.0">qualcomm/ai-hub-models v0.63.0</a>
+          (commit <code>671590e9e5</code>, 2026-09-23), BSD-3-Clause.
+          Generated 2026-10-17. Unofficial offline view; numbers are as published upstream.</li>
+        <li>Tool versions in this release:
+          onnx_runtime 1.27.1; qairt 2.45.0.260326154327, 2.50.0.260828221209.</li>
+        <li>Accuracy is measured upstream on a single device per model (shown in each popup); it does not change with the selected device. Only latency / throughput does.</li>
+        <li>Default Y value is the quantized on-device accuracy. "Float" uses the float on-device accuracy, falling back to the PyTorch reference when no on-device value exists.</li>
+        <li>Models split into several components (e.g. encoder + decoder) are plotted with the sum of their component latencies.</li>
+        <li>Devices marked * have no measurements of their own: AI Hub copies the numbers of a similar chipset onto them.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<script src="assets/vendor/chart.umd.min.js"></script>
+<script src="assets/vendor/hammer.min.js"></script>
+<script src="assets/vendor/chartjs-plugin-zoom.min.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/explorer.js"></script>
+</body>
+</html>
