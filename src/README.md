@@ -4,7 +4,16 @@ Generates offline, self-contained HTML snapshots that map Qualcomm AI Hub models
 across platforms, tasks, runtimes and precisions (efficiency map: on-device FPS
 vs. quantized on-device accuracy), one snapshot per AI Hub release.
 
-> Status: `normalize` and `build` are implemented and tested on v0.64.0.
+> Status: `normalize` and `build` are implemented; snapshots exist for v0.62.2, v0.63.0, v0.64.0.
+
+## Repository layout
+
+| Folder | Content |
+|---|---|
+| `src/` | the tool: data collection and page generation code (this folder) |
+| `tools/` | self-contained helper scripts and upstream checkouts used by the tool (e.g. `fetch_aihub_repo.sh`) |
+| `results/` | one self-contained snapshot per release, each with its own `index.html`; `results/index.html` lists them |
+| `docs/` | documentation (Markdown) |
 
 ## Architecture
 
@@ -67,7 +76,8 @@ results/aihub-<tag>/
 │   ├── explorer.css
 │   └── vendor/       Chart.js 4.4.1, chartjs-plugin-zoom 2.0.1, Hammer.js 2.0.8 (MIT, pinned copies)
 └── data/snapshot.json normalized data, for diffs across releases (committed)
-results/index.html    landing page listing every snapshot
+results/index.html    landing page listing every snapshot (the same table is written into
+                      the top-level README.md, between the snapshots:start/end markers)
 ```
 
 The page needs no network access: open `index.html` directly from disk.
@@ -96,7 +106,7 @@ pip install -r requirements.txt                 # Python 3.8+, PyYAML, Jinja2
 tools/fetch_aihub_repo.sh v0.64.0              # optional: normalize clones a missing tag itself
 python3 src/qcom_aihub_explorer.py build --tag v0.64.0      # normalize + render + landing page
 python3 src/qcom_aihub_explorer.py normalize --tag v0.64.0  # data/snapshot.json only
-python3 src/qcom_aihub_explorer.py landing                  # rebuild results/index.html only
+python3 src/qcom_aihub_explorer.py landing                  # rebuild results/index.html + README table only
 ```
 
 ## Conventions

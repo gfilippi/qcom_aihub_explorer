@@ -7,6 +7,7 @@ works when opened straight from disk (file://) with no network access.
 import glob
 import json
 import os
+import re
 import shutil
 
 import jinja2
@@ -113,3 +114,26 @@ def render_landing(results_dir):
     with open(os.path.join(results_dir, "index.html"), "w") as f:
         f.write(html)
     return snapshots
+
+
+def update_readme_table(readme_path, results_dir, snapshots):
+    """Rewrite the snapshot table between the snapshots:start/end markers of the README.
+
+    Returns False when the README has no markers (nothing is changed).
+    """
+    with open(readme_path) as f:
+        text = f.read()
+    pattern = re.compile(r"(<!-- snapshots:start[^>]*-->\n).*?(<!-- snapshots:end -->)", re.S)
+    if not pattern.search(text):
+        return False
+    rel = os.path.relpath(results_dir, os.path.dirname(os.path.abspath(readme_path))).replace(os.sep, "/")
+    lines = ["| Release | Upstream date | QAIRT | Models | Devices | Results |",
+             "|---|---|---|--:|--:|--:|"]
+    for s in snapshots:
+        lines.append("| [%s](%s/%s/index.html) | %s | %s | %d | %d | %s |" % (
+            s["release"]["tag"], rel, s["folder"], s["release"]["commit_date"][:10],
+            ", ".join(s["qairt"]), s["n_models"], s["n_devices"], "{:,}".format(s["n_perf"])))
+    table = "\n".join(lines) + "\n"
+    with open(readme_path, "w") as f:
+        f.write(pattern.sub(lambda m: m.group(1) + table + m.group(2), text))
+    return True

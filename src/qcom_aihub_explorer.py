@@ -13,6 +13,7 @@ import render
 __version__ = "0.1.0"
 
 RESULTS_DIR = os.path.join(fetch.PROJECT_ROOT, "results")
+README_PATH = os.path.join(fetch.PROJECT_ROOT, "README.md")
 
 
 def snapshot_dir(tag):
@@ -54,13 +55,18 @@ def cmd_build(args):
     out_dir = snapshot_dir(args.tag)
     render.render_snapshot(snapshot, out_dir)
     print("Wrote        %s" % os.path.join(out_dir, "index.html"))
+    write_landing()
+
+
+def write_landing():
     snapshots = render.render_landing(RESULTS_DIR)
     print("Wrote        %s (%d snapshots)" % (os.path.join(RESULTS_DIR, "index.html"), len(snapshots)))
+    if render.update_readme_table(README_PATH, RESULTS_DIR, snapshots):
+        print("Updated      %s (snapshot table)" % README_PATH)
 
 
 def cmd_landing(args):
-    snapshots = render.render_landing(RESULTS_DIR)
-    print("Wrote        %s (%d snapshots)" % (os.path.join(RESULTS_DIR, "index.html"), len(snapshots)))
+    write_landing()
 
 
 def main(argv=None):
@@ -74,7 +80,7 @@ def main(argv=None):
         p.add_argument("--tag", required=True, help="upstream release tag, e.g. v0.64.0")
         p.add_argument("--no-fetch", action="store_true", help="fail instead of cloning a missing checkout")
         p.set_defaults(func=func)
-    p = sub.add_parser("landing", help="regenerate results/index.html from the existing snapshots")
+    p = sub.add_parser("landing", help="regenerate results/index.html and the README table from the existing snapshots")
     p.set_defaults(func=cmd_landing)
     args = parser.parse_args(argv)
     if not getattr(args, "func", None):
