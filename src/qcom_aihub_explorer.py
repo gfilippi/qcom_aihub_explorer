@@ -8,6 +8,7 @@ import sys
 
 import fetch
 import normalize
+import render
 
 __version__ = "0.1.0"
 
@@ -18,7 +19,7 @@ def snapshot_dir(tag):
     return os.path.join(RESULTS_DIR, "aihub-" + tag)
 
 
-def cmd_normalize(args):
+def write_snapshot(args):
     checkout = fetch.get_checkout(args.tag, fetch=not args.no_fetch)
     snapshot = normalize.build_snapshot(checkout)
     out_dir = os.path.join(snapshot_dir(args.tag), "data")
@@ -41,16 +42,40 @@ def cmd_normalize(args):
     for tool, versions in snapshot["release"]["tool_versions"].items():
         print("%-12s %s" % (tool, ", ".join(versions)))
     print("Wrote        %s (%.1f MB)" % (out_path, os.path.getsize(out_path) / 1e6))
+    return snapshot
+
+
+def cmd_normalize(args):
+    write_snapshot(args)
+
+
+def cmd_build(args):
+    snapshot = write_snapshot(args)
+    out_dir = snapshot_dir(args.tag)
+    render.render_snapshot(snapshot, out_dir)
+    print("Wrote        %s" % os.path.join(out_dir, "index.html"))
+    snapshots = render.render_landing(RESULTS_DIR)
+    print("Wrote        %s (%d snapshots)" % (os.path.join(RESULTS_DIR, "index.html"), len(snapshots)))
+
+
+def cmd_landing(args):
+    snapshots = render.render_landing(RESULTS_DIR)
+    print("Wrote        %s (%d snapshots)" % (os.path.join(RESULTS_DIR, "index.html"), len(snapshots)))
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="qcom_aihub_explorer")
     parser.add_argument("--version", action="version", version=__version__)
     sub = parser.add_subparsers(dest="command")
-    p = sub.add_parser("normalize", help="read the upstream checkout and write data/snapshot.json")
-    p.add_argument("--tag", required=True, help="upstream release tag, e.g. v0.64.0")
-    p.add_argument("--no-fetch", action="store_true", help="fail instead of cloning a missing checkout")
-    p.set_defaults(func=cmd_normalize)
+    for name, func, help_text in (
+            ("normalize", cmd_normalize, "read the upstream checkout and write data/snapshot.json"),
+            ("build", cmd_build, "normalize, then render index.html + assets and refresh results/index.html")):
+        p = sub.add_parser(name, help=help_text)
+        p.add_argument("--tag", required=True, help="upstream release tag, e.g. v0.64.0")
+        p.add_argument("--no-fetch", action="store_true", help="fail instead of cloning a missing checkout")
+        p.set_defaults(func=func)
+    p = sub.add_parser("landing", help="regenerate results/index.html from the existing snapshots")
+    p.set_defaults(func=cmd_landing)
     args = parser.parse_args(argv)
     if not getattr(args, "func", None):
         parser.print_help()

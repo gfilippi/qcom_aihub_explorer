@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Hub Model Explorer · Snapshots</title>
+<style>
+:root { --bg: #f6f7f9; --card: #fff; --text: #1c2430; --muted: #5f6b7a; --line: #dde2e8; --accent: #3253dc; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #12161c; --card: #1a2028; --text: #e6eaf0; --muted: #98a3b3; --line: #2c3440; --accent: #8aa2ff; }
+}
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 860px; margin: 0 auto; padding: 32px 16px; }
+h1 { font-size: 24px; margin: 0 0 4px; }
+p { color: var(--muted); margin: 0 0 24px; }
+table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+td.num { font-variant-numeric: tabular-nums; }
+a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>AI Hub Model Explorer</h1>
+  <p>Offline snapshots of Qualcomm AI Hub model performance, one per upstream release.</p>
+  <table>
+    <thead><tr><th>Release</th><th>Upstream date</th><th>QAIRT</th><th>Models</th><th>Devices</th><th>Results</th></tr></thead>
+    <tbody>
+    
+      <tr>
+        <td><a href="aihub-v0.64.0/index.html">v0.64.0</a></td>
+        <td>2026-10-06</td>
+        <td>2.45, 2.50</td>
+        <td class="num">241</td>
+        <td class="num">21</td>
+        <td class="num">18,492</td>
+      </tr>
+    
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

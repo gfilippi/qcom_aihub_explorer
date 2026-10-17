@@ -416162,7 +416162,7 @@
  "release": {
   "commit": "53af617346c1a9c51c0cdf9d05540946d02741e5",
   "commit_date": "2026-10-06T15:50:00-07:00",
-  "generated_at": "2026-10-17T13:04:54+00:00",
+  "generated_at": "2026-10-17T13:15:42+00:00",
   "release_url": "https://github.com/qualcomm/ai-hub-models/releases/tag/v0.64.0",
   "skipped_models": {
    "convnext_v2_base": "unpublished",
