@@ -25,3 +25,10 @@ rendered through GitHub Pages.
 | [v0.63.0](results/aihub-v0.63.0/index.html) | [view](https://gfilippi.github.io/qcom_aihub_explorer/results/aihub-v0.63.0/index.html) | 2026-09-23 | 2.45, 2.50 | 235 | 21 | 18,031 |
 | [v0.62.2](results/aihub-v0.62.2/index.html) | [view](https://gfilippi.github.io/qcom_aihub_explorer/results/aihub-v0.62.2/index.html) | 2026-09-11 | 2.45 | 229 | 23 | 18,111 |
 <!-- snapshots:end -->
+
+## License
+
+This project is released under the [BSD-3-Clause license](LICENSE).
+The snapshot data in `results/` comes from
+[qualcomm/ai-hub-models](https://github.com/qualcomm/ai-hub-models) (BSD-3-Clause), and the bundled
+chart libraries in `src/static/vendor/` are MIT licensed (see [their notice](src/static/vendor/README.md)).
